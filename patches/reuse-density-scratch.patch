@@ -48,18 +48,18 @@ diff --git a/crates/horizon-world/src/worldgen/generator.rs b/crates/horizon-wor
              self.settings.default_block,
 +            &mut worker.density_scratch,
          )
-@@ -1996,3 +2002,5 @@
+@@ -1995,3 +1999,5 @@
      structure_biomes: HashMap<[i32; 3], BiomeId>,
      timings: StageTimings,
 +    /// Reused density volume for terrain filling (one scratch buffer per worker).
 +    density_scratch: Vec<f32>,
      heights: HashMap<(i32, i32, u8), i32>,
-@@ -2980,3 +2983,4 @@
+@@ -2977,3 +2983,4 @@
                  structure_biomes: HashMap::new(),
                  timings: StageTimings::default(),
 +                density_scratch: Vec::new(),
                  structures_only: false,
-@@ -3129,3 +3136,4 @@
+@@ -3128,3 +3135,4 @@
          state.structure_biomes = HashMap::new();
          state.heights = HashMap::new();
 +        state.density_scratch = Vec::new();
