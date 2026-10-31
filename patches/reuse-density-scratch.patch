@@ -1,12 +1,7 @@
 diff --git a/crates/horizon-world/src/worldgen/terrain.rs b/crates/horizon-world/src/worldgen/terrain.rs
-index 0000000..0000000 100644
 --- a/crates/horizon-world/src/worldgen/terrain.rs
 +++ b/crates/horizon-world/src/worldgen/terrain.rs
-@@
- pub fn fill_noise<B: TerrainBlockStates>(
-@@
-     aquifer: &mut (impl TerrainAquifer + ?Sized),
-     default_block: BlockStateId,
+@@ -560,1 +560,23 @@
  ) -> Result<(), TerrainError> {
 +    let mut density = Vec::new();
 +    fill_noise_with_scratch(
@@ -30,38 +25,42 @@ index 0000000..0000000 100644
 +    default_block: BlockStateId,
 +    density: &mut Vec<f32>,
 +) -> Result<(), TerrainError> {
-@@
+@@ -576,1 +598,1 @@
 -    let mut density = vec![0.; volume.size()];
 +    density.resize(volume.size(), 0.0);
-     final_density.sample_volume(context, &mut density, volume)?;
 diff --git a/crates/horizon-world/src/worldgen/generator.rs b/crates/horizon-world/src/worldgen/generator.rs
-index 0000000..0000000 100644
 --- a/crates/horizon-world/src/worldgen/generator.rs
 +++ b/crates/horizon-world/src/worldgen/generator.rs
-@@
+@@ -39,1 +39,4 @@
 -    terrain::{PreLightChunkStage, TerrainAquifer, TerrainBlockStates, TerrainChunk, fill_noise},
 +    terrain::{
 +        PreLightChunkStage, TerrainAquifer, TerrainBlockStates, TerrainChunk,
 +        fill_noise_with_scratch,
 +    },
-@@
+@@ -1372,8 +1375,9 @@
 -        fill_noise(
 +        fill_noise_with_scratch(
-@@
+             &mut chunk,
+             volume,
+             self.router.get(RouterField::FinalDensity).as_ref(),
+             context,
              aquifer.as_mut(),
              self.settings.default_block,
 +            &mut worker.density_scratch,
-@@
+         )
+@@ -1996,3 +2002,5 @@
      structure_biomes: HashMap<[i32; 3], BiomeId>,
      timings: StageTimings,
 +    /// Reused density volume for terrain filling (one scratch buffer per worker).
 +    density_scratch: Vec<f32>,
      heights: HashMap<(i32, i32, u8), i32>,
-@@
+@@ -2980,3 +2983,4 @@
                  structure_biomes: HashMap::new(),
                  timings: StageTimings::default(),
 +                density_scratch: Vec::new(),
-@@
+                 structures_only: false,
+@@ -3129,3 +3136,4 @@
          state.structure_biomes = HashMap::new();
          state.heights = HashMap::new();
 +        state.density_scratch = Vec::new();
+     }
