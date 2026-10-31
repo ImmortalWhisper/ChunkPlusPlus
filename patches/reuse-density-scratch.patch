@@ -25,9 +25,10 @@ diff --git a/crates/horizon-world/src/worldgen/terrain.rs b/crates/horizon-world
 +    default_block: BlockStateId,
 +    density: &mut Vec<f32>,
 +) -> Result<(), TerrainError> {
-@@ -576,1 +598,1 @@
+@@ -576,1 +598,2 @@
 -    let mut density = vec![0.; volume.size()];
 +    density.resize(volume.size(), 0.0);
++    density.fill(0.0);
 diff --git a/crates/horizon-world/src/worldgen/generator.rs b/crates/horizon-world/src/worldgen/generator.rs
 --- a/crates/horizon-world/src/worldgen/generator.rs
 +++ b/crates/horizon-world/src/worldgen/generator.rs

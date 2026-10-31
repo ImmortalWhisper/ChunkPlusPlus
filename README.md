@@ -10,7 +10,7 @@ Noise terrain generation in `crates/horizon-world/src/worldgen/terrain.rs` sampl
 
 This experiment retains the buffer on each `GeneratorWorker` and resizes it for each volume. The existing `GeneratorWorker::release` path drops it when a streaming worker goes idle. The existing public `fill_noise` API remains available and uses a temporary buffer; the generator worker calls the new scratch-aware function.
 
-The change removes repeated allocation/free work. It does not reduce density sampling or terrain math, so any total speedup depends on allocation being a measurable part of chunk-generation time. It affects locally generated terrain; server-sent multiplayer chunks do not use this path.
+The buffer is reset to zero before sampling because some density samplers may leave output elements untouched; this preserves the previous behavior. So the experiment removes repeated allocation/free work, not the buffer initialization, density sampling, or terrain math. Any total speedup depends on allocation being a measurable part of chunk-generation time. It affects locally generated terrain; server-sent multiplayer chunks do not use this path.
 
 ## Patch
 
